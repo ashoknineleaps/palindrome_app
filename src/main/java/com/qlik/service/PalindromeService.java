@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.qlik.constant.Constant;
@@ -14,6 +16,8 @@ import com.qlik.model.Palindrome;
 
 @Service
 public class PalindromeService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(PalindromeService.class);
 
 	public static Map<Palindrome, String> map = new HashMap<>();
 
@@ -38,6 +42,7 @@ public class PalindromeService {
 
 		if(paragraph.isBlank())
 		{
+			LOGGER.error("Invalid input paragraph : "+paragraph);
 			throw new ParagraphException("Invalid input paragraph");
 		}
 		
@@ -46,16 +51,19 @@ public class PalindromeService {
 		if(!map.containsKey(palindrome))
 		{
 			map.put(palindrome, paragraph);
+			LOGGER.info("Map Updated");
 		}
 
 		String copyStr = map.get(palindrome).replaceAll(Constant.REGEX_SPACE, Constant.EMPTY_STRING).toLowerCase();
 		int startInclusive = 0;
 		int endExclusive = copyStr.length() / 2;
 		
-		return IntStream.range(startInclusive, endExclusive)
+		boolean result = IntStream.range(startInclusive, endExclusive)
 				.noneMatch(message -> copyStr.charAt(message) != copyStr.charAt(copyStr.length() - message - 1));
 		
-
+		LOGGER.info("Is Paragraph Palindrome: "+result);
+		
+		return result;
 
 	}
 	
@@ -64,6 +72,7 @@ public class PalindromeService {
 		
 		if(paragraph.isBlank())
 		{
+			LOGGER.error("Invalid input paragraph : "+paragraph);
 			throw new ParagraphException("Invalid input paragraph");
 		}
 		
@@ -72,6 +81,7 @@ public class PalindromeService {
 		if(!map.containsKey(palindrome))
 		{
 			map.put(palindrome, paragraph);
+			LOGGER.info("Map Updated");
 		}
 
 		String copyStr = map.get(palindrome).replaceAll(Constant.REGEX_SPACE, Constant.EMPTY_STRING).toLowerCase();
@@ -110,6 +120,7 @@ public class PalindromeService {
 			}
 		}
 		
+		LOGGER.info("Get all Palindrome count");
 		return palindromes.size();
 	}
 
